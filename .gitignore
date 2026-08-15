@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.scratch/
+*.tsbuildinfo
+
+# Local env — never commit. .env.example is the template.
+.env
+.env.local
+.env.*.local
+
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Supabase CLI
+supabase/.temp/
+supabase/.branches/

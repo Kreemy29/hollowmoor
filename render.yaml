@@ -1,0 +1,93 @@
+# ===========================================================================
+# HOLLOWMOOR — Render blueprint
+#
+# Deploys the frontend as a static site. That is all this app needs: the
+# backend is Supabase (Postgres + Auth + Realtime + Edge Functions), so there
+# is no server process to run and nothing to keep warm on a free tier.
+#
+# To deploy:
+#   1. Push this repo to GitHub.
+#   2. Render → New → Blueprint → pick the repo. It reads this file.
+#   3. Set the env vars below in the Render dashboard (they are marked
+#      `sync: false`, so Render prompts for them instead of storing them here).
+#
+# Deploying with NO env vars set is valid and fully playable — the app runs
+# offline against localStorage. Add them when you want friends and chat.
+# ===========================================================================
+
+services:
+  - type: web
+    name: hollowmoor
+    runtime: static
+    plan: free
+    # `npm ci` for a reproducible install from package-lock.json.
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    # Only rebuild when something that affects the bundle changes.
+    buildFilter:
+      paths:
+        - app/**
+        - public/**
+        - index.html
+        - package.json
+        - package-lock.json
+        - vite.config.ts
+        - tsconfig.json
+      ignoredPaths:
+        - supabase/**
+        - tests/**
+        - README.md
+
+    envVars:
+      # Vite 5 needs Node 18+; pinned so a Render default bump can't break builds.
+      - key: NODE_VERSION
+        value: '22'
+
+      # --- Optional: going online -------------------------------------------
+      # Leave unset to ship the fully-playable offline build.
+      # The anon key is meant to be public — RLS is what protects the data.
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+
+      # --- Optional: push reminders -----------------------------------------
+      # PUBLIC half of the VAPID pair only. The private half is a Supabase
+      # secret and must never appear here.
+      - key: VITE_VAPID_PUBLIC_KEY
+        sync: false
+
+      # --- Optional: extra chat blocklist ------------------------------------
+      - key: VITE_BLOCKLIST
+        sync: false
+
+      # NOTE: XAI_API_KEY does NOT belong here. Anything Render injects into a
+      # static build is compiled into the bundle and is public. The x.ai key
+      # lives only in Supabase Edge Function secrets.
+
+    headers:
+      # The service worker must never be served stale, or push registration
+      # silently keeps using an old build.
+      - path: /sw.js
+        name: Cache-Control
+        value: 'public, max-age=0, must-revalidate'
+      - path: /sw.js
+        name: Service-Worker-Allowed
+        value: /
+      # Hashed asset filenames are safe to cache forever.
+      - path: /assets/*
+        name: Cache-Control
+        value: 'public, max-age=31536000, immutable'
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+    routes:
+      # SPA fallback. Render serves real files first, so this only catches
+      # client-side routes like /checkin and /codex on a hard refresh.
+      - type: rewrite
+        source: /*
+        destination: /index.html

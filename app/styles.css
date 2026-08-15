@@ -1,0 +1,223 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   HOLLOWMOOR — design tokens
+   Palette brief: dusk purple/indigo Haze, ember orange for Grit,
+   bone white for text, toxic-teal for "clean / clear-headed" wins,
+   amber for warnings and relapse. Deliberately NOT weed-green.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-haze-950: #0b0716;
+  --color-haze-900: #150e2b;
+  --color-haze-800: #1e1440;
+  --color-haze-700: #2a1b57;
+  --color-haze-600: #3a2676;
+  --color-haze-500: #4e33a0;
+  --color-haze-400: #6d4aff;
+  --color-haze-300: #9a80ff;
+
+  --color-ember-600: #d4531a;
+  --color-ember-500: #ff7a2f;
+  --color-ember-400: #ff9d5c;
+
+  --color-clear-600: #0f9f8b;
+  --color-clear-500: #14e0bd;
+  --color-clear-400: #58f5da;
+
+  --color-amber-warn: #ffb020;
+
+  --color-bone-100: #f6f2ea;
+  --color-bone-300: #cfc6bb;
+  --color-bone-500: #8e8579;
+
+  --font-display: 'Press Start 2P', ui-monospace, monospace;
+  --font-body: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  color-scheme: dark;
+  --hm-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-haze-950);
+  color: var(--color-bone-100);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* Crisp pixel art everywhere — never let the browser smooth a sprite. */
+img,
+canvas {
+  image-rendering: pixelated;
+}
+
+/* Keyboard focus must always be visible (quality floor, §7). */
+:focus-visible {
+  outline: 3px solid var(--color-clear-500);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Respect prefers-reduced-motion globally. Individual components also
+   check the `useReducedMotion` hook to swap animations for instant states. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* In-app override, set from Settings. Mirrors the media query above for
+   players whose OS setting doesn't match what they want in here. */
+.hm-reduce-motion *,
+.hm-reduce-motion *::before,
+.hm-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+/* The drifting fog layer behind the whole app. */
+@keyframes hm-drift {
+  0% {
+    transform: translate3d(-6%, 0, 0);
+  }
+  100% {
+    transform: translate3d(6%, 0, 0);
+  }
+}
+
+@keyframes hm-pulse-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes hm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hm-rise {
+  animation: hm-rise 260ms ease-out both;
+}
+
+/* Idle breathing bob on every Kindred sprite. */
+@keyframes hm-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4%);
+  }
+}
+
+.hm-bob {
+  animation: hm-bob 2.4s ease-in-out infinite;
+}
+
+@keyframes hm-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-2px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+.hm-shake {
+  animation: hm-shake 420ms ease-in-out;
+}
+
+/* The evolution flash — the signature moment (§7). */
+@keyframes hm-flash {
+  0% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  35% {
+    filter: brightness(4) saturate(0);
+    transform: scale(1.12);
+  }
+  70% {
+    filter: brightness(4) saturate(0);
+    transform: scale(1.12);
+  }
+  100% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+}
+
+.hm-flash {
+  animation: hm-flash 1.6s ease-in-out;
+}
+
+/* Chunky pixel-ish panel border without any image assets. */
+.hm-panel {
+  background: color-mix(in srgb, var(--color-haze-800) 88%, transparent);
+  border: 2px solid var(--color-haze-600);
+  box-shadow:
+    0 0 0 2px var(--color-haze-950),
+    0 6px 0 0 rgb(0 0 0 / 0.35);
+}
+
+.hm-scroll-x {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-haze-900);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-haze-600);
+  border: 2px solid var(--color-haze-900);
+}

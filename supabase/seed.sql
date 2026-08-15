@@ -1,0 +1,231 @@
+-- =========================================================================
+-- HOLLOWMOOR — seed data
+--
+-- GENERATED FILE. Do not edit by hand — edit app/data/*.ts and run:
+--     npm run seed
+--
+-- Safe to re-run: every insert upserts on the primary key.
+-- =========================================================================
+
+-- Kindred roster -----------------------------------------------------------
+insert into kindred_species (id, dex_no, stage_names, evolve_at, strength, hue, archetype, rarity, is_starter, appears_at, dex_entry) values
+  ('emberkin', 1, '{"Emberkin","Kilnmaw","Forgewarden"}', '{7,30}', 'Willpower', 22, 'beast', 'common', true, 0, 'Runs hot. Sleeps in the ashes of things it decided not to do. Gets brighter the longer you hold the line.'),
+  ('tidewhelp', 2, '{"Tidewhelp","Brinecaller","Deepsolace"}', '{7,30}', 'Calm', 194, 'serpent', 'common', true, 0, 'Breathes in fours, holds for seven, lets go for eight. Nobody has ever seen one panic.'),
+  ('mossling', 3, '{"Mossling","Thornstead","Rootmonarch"}', '{7,30}', 'Discipline', 104, 'beast', 'common', true, 0, 'Grows a single ring per clean day. Cut one open and you can count exactly how stubborn it is.'),
+  ('idlewisp', 4, '{"Idlewisp","Driftlamp","Beaconsoul"}', '{7,30}', 'Purpose', 188, 'wisp', 'common', false, 2, 'Drifts toward whoever has nothing to do. Harmless alone. Devastating in a long empty afternoon.'),
+  ('fogpup', 5, '{"Fogpup","Misthound","Cloudreaver"}', '{7,30}', 'Loyalty', 262, 'beast', 'common', false, 3, 'Born in the Haze but refuses to serve it. Follows Breakers home and growls at the front door.'),
+  ('ashmoth', 6, '{"Ashmoth","Cindermoth","Pyrewing"}', '{7,30}', 'Patience', 36, 'moth', 'common', false, 4, 'Circles a craving for hours without landing on it. An excellent teacher.'),
+  ('snoozle', 7, '{"Snoozle","Dozewyrm","Somnarch"}', '{7,30}', 'Rest', 232, 'serpent', 'common', false, 5, 'Only appears to Breakers who have stopped sleeping properly. Curls up on your chest until the ceiling gets boring.'),
+  ('knotwyrm', 8, '{"Knotwyrm","Cordserpent","Unbinder"}', '{7,30}', 'Release', 158, 'serpent', 'uncommon', false, 7, 'Ties itself in knots so you do not have to. Untangles one loop per slow breath.'),
+  ('lonefin', 9, '{"Lonefin","Solowake","Tidechorus"}', '{7,30}', 'Connection', 208, 'serpent', 'uncommon', false, 10, 'Swims alone for years, then joins a chorus and never shuts up about it. Evolves only near other Breakers.'),
+  ('gigglespore', 10, '{"Gigglespore","Chucklecap","Mirthbloom"}', '{7,30}', 'Joy', 304, 'wisp', 'uncommon', false, 12, 'Proof that a good night does not require the Haze. Blooms loudest at parties it was not invited to.'),
+  ('pressgang', 11, '{"Pressgang","Crowdcoil","Chorusmaw"}', '{7,30}', 'Boundaries', 342, 'beast', 'uncommon', false, 15, 'Speaks in other people’s voices. Says "come on, one won’t hurt" in perfect impressions of your friends.'),
+  ('tickbell', 12, '{"Tickbell","Chimewretch","Tollwarden"}', '{7,30}', 'Timing', 48, 'wisp', 'uncommon', false, 18, 'Rings once a day at the worst possible minute. Tamed Tollwardens ring at good minutes instead.'),
+  ('clinkrat', 13, '{"Clinkrat","Coinchewer","Vaultgnash"}', '{7,30}', 'Thrift', 44, 'beast', 'uncommon', false, 21, 'Hoards every coin you did not spend on the Haze. By day sixty the pile is genuinely embarrassing.'),
+  ('lanternjack', 14, '{"Lanternjack","Wickwraith","Hearthlord"}', '{7,30}', 'Hope', 40, 'wisp', 'rare', false, 25, 'Carries a light it never lets go out, mostly out of spite.'),
+  ('grithound', 15, '{"Grithound","Ironjaw","Bulwarkbeast"}', '{7,30}', 'Endurance', 14, 'beast', 'rare', false, 30, 'Has bitten through every excuse ever offered to it. Its jaw does not open again until day thirty.'),
+  ('hazelet', 16, '{"Hazelet","Fogmaw","Murkcolossus"}', '{7,30}', 'The Haze itself', 278, 'moth', 'rare', false, 45, 'A piece of the Haze small enough to keep in your pocket. Some Breakers carry one as a reminder of the size of the thing.'),
+  ('clarion', 17, '{"Clarion","Brightpeal","Dawnherald"}', '{7,30}', 'Clarity', 172, 'moth', 'mythic', false, 90, 'Only visible above the fog line. Breakers who reach Clearsummit say it was following them the entire way up.')
+on conflict (id) do update set
+  dex_no = excluded.dex_no, stage_names = excluded.stage_names, evolve_at = excluded.evolve_at,
+  strength = excluded.strength, hue = excluded.hue, archetype = excluded.archetype,
+  rarity = excluded.rarity, is_starter = excluded.is_starter, appears_at = excluded.appears_at,
+  dex_entry = excluded.dex_entry;
+
+-- Trigger Trials and endgame badges ----------------------------------------
+insert into badges (id, sort_order, name, trigger_tag, required_streak, trial_game, trial_target, kind, blurb) values
+  ('trial-boredom', 1, 'The Empty Hour', 'boredom', 3, 'memory', 8, 'trial', 'Ashen Verge. Nothing to do and all day to do it. Clear the Verge without wandering back to the bench.'),
+  ('trial-stress', 2, 'The Unclenching', 'stress', 7, 'breath', 4, 'trial', 'Lowtide Steps. Four full breaths with the tide. Your shoulders come down or you fail.'),
+  ('trial-loneliness', 3, 'The Long Table', 'loneliness', 14, 'memory', 12, 'trial', 'An empty room remembers everyone who left it. Match the faces before the lamps go out.'),
+  ('trial-celebration', 4, 'The Good Night', 'celebration', 21, 'crusher', 60, 'trial', 'Hollow Market at full volume. Prove a good night does not need the Haze in it.'),
+  ('trial-sleeplessness', 5, 'The Ceiling', 'sleeplessness', 30, 'breath', 6, 'trial', 'The Long Dark, 3am. You cannot sleep your way out. You can breathe your way out.'),
+  ('trial-peer-pressure', 6, 'The Flat No', 'peer_pressure', 45, 'crusher', 90, 'trial', 'Gutter & Lantern. Old faces, same bench, same offer. Say no ninety times without explaining yourself once.'),
+  ('trial-bell', 7, 'The Bell Unrung', 'the_bell', 60, 'delve', 1, 'trial', 'Bellfield. It rings at the same wrong minute every day. Stay in the delve until it stops mattering.'),
+  ('trial-payday', 8, 'The Full Pocket', 'payday', 75, 'crusher', 120, 'trial', 'Coinfall. Money in hand and a bad idea in reach. Spend it on absolutely anything else.'),
+  ('council-first', 9, 'First Seat', 'endgame', 90, 'delve', 1, 'council', 'The Haze Council convenes. The first seat is filled by the version of you from day one.'),
+  ('council-second', 10, 'Second Seat', 'endgame', 180, 'delve', 2, 'council', 'The second seat argues that you were more fun before. It is lying, and it is loud.'),
+  ('council-third', 11, 'Third Seat', 'endgame', 270, 'delve', 3, 'council', 'The last seat is empty. It has been waiting for you to sit in it and change your mind.'),
+  ('champion', 12, 'Champion of Clearsummit', 'endgame', 365, 'breath', 8, 'champion', 'Three hundred and sixty-five days. Above the fog line. You can see the whole region.')
+on conflict (id) do update set
+  sort_order = excluded.sort_order, name = excluded.name, trigger_tag = excluded.trigger_tag,
+  required_streak = excluded.required_streak, trial_game = excluded.trial_game,
+  trial_target = excluded.trial_target, kind = excluded.kind, blurb = excluded.blurb;
+
+-- Notice board -------------------------------------------------------------
+insert into quests (id, title, description, kind, target, grit_reward, cadence) values
+  ('q-checkin', 'Report to the Rest Stop', 'Check in today, either way. Honest counts.', 'checkin', 1, 25, 'daily'),
+  ('q-breath', 'Dive the Lowtide', 'Complete two rounds of Breath of the Deep.', 'minigame', 2, 35, 'daily'),
+  ('q-crusher', 'Clear the Fogbank', 'Pop 40 Haze bubbles in Craving Crusher.', 'minigame', 40, 35, 'daily'),
+  ('q-memory', 'Walk the Old Streets', 'Finish one round of Memory of Restwick.', 'minigame', 1, 30, 'daily'),
+  ('q-delve', 'Descend', 'Hold one full Focus Delve without leaving.', 'minigame', 1, 90, 'daily'),
+  ('q-square', 'Show Your Face', 'Appear in the town square while someone else is there.', 'social', 1, 30, 'daily'),
+  ('q-chat', 'Say Something', 'Post once in any channel. Trash talk qualifies.', 'social', 1, 25, 'daily'),
+  ('q-hype', 'Back Someone Up', 'React to a friend’s check-in.', 'social', 1, 30, 'daily'),
+  ('q-craving', 'Beat One Down', 'Use the Craving Now button and finish the run.', 'minigame', 1, 40, 'daily'),
+  ('wq-week-clean', 'A Clean Week', 'Log five clean days this week.', 'checkin', 5, 220, 'weekly'),
+  ('wq-raid', 'Hurt the Titan', 'Deal 500 damage to the Haze Titan this week.', 'raid', 500, 260, 'weekly'),
+  ('wq-games', 'Regular at the Arcade', 'Finish ten minigame runs this week.', 'minigame', 10, 200, 'weekly')
+on conflict (id) do update set
+  title = excluded.title, description = excluded.description, kind = excluded.kind,
+  target = excluded.target, grit_reward = excluded.grit_reward, cadence = excluded.cadence;
+
+-- Shop ---------------------------------------------------------------------
+insert into items (id, name, description, category, price, payload) values
+  ('freeze-token', 'Stillglass Token', 'Holds your chain for one day you genuinely could not check in. Cannot cover a relapse — the app would stop working if it could.', 'utility', 260, '{"grants":"freeze"}'::jsonb),
+  ('codex-lens', 'Codex Lens', 'Doubles your odds of a wild Kindred showing up after a minigame, for one day.', 'utility', 180, '{"effect":"catch_boost","hours":24}'::jsonb),
+  ('accent-ember', 'Ember Aura', 'Burnt-orange glow around your marker in the square.', 'cosmetic', 120, '{"accent":"#ff7a2f"}'::jsonb),
+  ('accent-clear', 'Clearwater Aura', 'The toxic-teal of a clear head.', 'cosmetic', 120, '{"accent":"#14e0bd"}'::jsonb),
+  ('accent-violet', 'Violet Aura', 'Haze purple, worn on purpose. Know your enemy.', 'cosmetic', 120, '{"accent":"#9a80ff"}'::jsonb),
+  ('accent-bone', 'Bone Aura', 'Plain white. Extremely smug.', 'cosmetic', 200, '{"accent":"#f6f2ea"}'::jsonb),
+  ('accent-gold', 'Coinfall Gold', 'For Breakers who made it past Payday.', 'cosmetic', 400, '{"accent":"#ffb020"}'::jsonb),
+  ('skin-frost', 'Frostmark Coat', 'Cools your companion’s palette to winter blue.', 'cosmetic', 300, '{"hueShift":200}'::jsonb),
+  ('skin-ash', 'Ashfall Coat', 'Grey and orange, like something that walked out of a fire.', 'cosmetic', 300, '{"hueShift":20}'::jsonb),
+  ('skin-void', 'Hollow Coat', 'Deep violet. Slightly unsettling. Very popular.', 'cosmetic', 450, '{"hueShift":280}'::jsonb),
+  ('sticker-nope', 'Sticker: FLAT NO', 'For when someone offers and you do not feel like typing.', 'sticker', 90, '{"glyph":"🚫"}'::jsonb),
+  ('sticker-fog', 'Sticker: FOG OFF', 'Aimed squarely at the Dealer.', 'sticker', 90, '{"glyph":"🌫️"}'::jsonb),
+  ('sticker-streak', 'Sticker: NUMBERS', 'Post it when your streak speaks for itself.', 'sticker', 90, '{"glyph":"📈"}'::jsonb),
+  ('sticker-ember', 'Sticker: EMBER', 'Hype a friend without saying anything embarrassing.', 'sticker', 90, '{"glyph":"🔥"}'::jsonb),
+  ('sticker-titan', 'Sticker: TITAN DOWN', 'Unlocked bragging rights, in sticker form.', 'sticker', 150, '{"glyph":"💥"}'::jsonb),
+  ('deco-lantern', 'Restwick Lantern', 'Hangs by your marker in the town square.', 'decoration', 220, '{"glyph":"🏮"}'::jsonb),
+  ('deco-bench', 'The Good Bench', 'A bench you sit on for entirely different reasons now.', 'decoration', 260, '{"glyph":"🪑"}'::jsonb),
+  ('deco-banner', 'Breaker Banner', 'Flies your streak over the square.', 'decoration', 380, '{"glyph":"🚩"}'::jsonb)
+on conflict (id) do update set
+  name = excluded.name, description = excluded.description, category = excluded.category,
+  price = excluded.price, payload = excluded.payload;
+
+-- Fallback voice library ---------------------------------------------------
+-- Mirrored server-side so the edge function has something to say when Grok is
+-- unreachable or no XAI_API_KEY is configured.
+delete from voice_lines;
+insert into voice_lines (speaker, line) values
+  ('dealer_relapse', 'Back so soon? I didn’t even move the furniture.'),
+  ('dealer_relapse', 'Day zero. My favourite number. It has such a nice round shape.'),
+  ('dealer_relapse', 'You didn’t lose to me. You lost to a Tuesday.'),
+  ('dealer_relapse', 'I love this part. The part where you explain it to yourself.'),
+  ('dealer_relapse', 'Careful, your streak fell off. Oh wait — that was hours ago.'),
+  ('dealer_relapse', '"Just this once" is my most successful product. Repeat customers every time.'),
+  ('dealer_relapse', 'The counter goes back to zero. The excuse goes into my collection.'),
+  ('dealer_relapse', 'You held out longer than last time. Genuinely annoying of you.'),
+  ('dealer_relapse', 'And the crowd goes… back to bed.'),
+  ('dealer_relapse', 'That plan you had? I read it. It was adorable.'),
+  ('dealer_relapse', 'You know what I like about you? Your consistency. In this specific area.'),
+  ('dealer_relapse', 'A whole streak, gone, and I didn’t even have to try hard.'),
+  ('dealer_relapse', 'Somewhere a calendar just sighed.'),
+  ('dealer_relapse', 'The boredom got you. The boredom always gets you. It’s free labour for me.'),
+  ('dealer_relapse', 'You didn’t decide anything. You just stopped deciding, and I filled the gap.'),
+  ('dealer_relapse', 'Your Kindred is asleep. Don’t worry, it’s used to it.'),
+  ('dealer_relapse', 'I’ll keep the light on. I always keep the light on.'),
+  ('dealer_relapse', 'Look at that — the loop still fits. Like it was made for you.'),
+  ('dealer_relapse', 'You told your friends the number. That’s the bit that stings, isn’t it.'),
+  ('dealer_relapse', 'Same time tomorrow? I’m very flexible.'),
+  ('dealer_salty', 'Still here? Fine. I have other clients.'),
+  ('dealer_salty', 'Congratulations, you’ve gone a whole day without me. Riveting television.'),
+  ('dealer_salty', 'You look insufferable. Clear-eyed and insufferable.'),
+  ('dealer_salty', 'Enjoy the streak. Streaks are famously permanent.'),
+  ('dealer_salty', 'I’m not worried. I’m just… standing here. Watching. Casually.'),
+  ('dealer_salty', 'A week. Cute. I’ve seen weeks. Weeks are nothing.'),
+  ('dealer_salty', 'You’re only doing this to spite me, and honestly? It’s working.'),
+  ('dealer_salty', 'Every day you don’t show up, my numbers look worse. Stop it.'),
+  ('dealer_salty', 'You’ve started sleeping properly. Disgusting.'),
+  ('dealer_salty', 'This is a phase. A long, well-documented, extremely public phase.'),
+  ('dealer_salty', 'Your Kindred evolved. Great. Now it’s a bigger problem for me.'),
+  ('dealer_salty', 'I preferred you when you were easier to schedule.'),
+  ('dealer_salty', 'Do you know how boring you’ve become? Do you? Do you know?'),
+  ('dealer_salty', 'You checked in before I even got my coffee. Unsportsmanlike.'),
+  ('dealer_salty', 'Fine. FINE. Take the day. Take the whole stupid day.'),
+  ('dealer_salty', 'Weekend’s coming. I’m very patient. Ask anyone.'),
+  ('dealer_salty', 'You’ve got money in your pocket for once. That’s traditionally my window.'),
+  ('dealer_salty', 'Someone at the town square asked about your streak. I hated it.'),
+  ('dealer_salty', 'One day you’ll get complacent. I have literally nothing else scheduled.'),
+  ('dealer_salty', 'You’re making this personal. Good. I work better angry.'),
+  ('vale_hype', 'That’s another one in the bank. Nobody can take today off you.'),
+  ('vale_hype', 'You made a boring, unglamorous, completely correct decision. That’s the whole game.'),
+  ('vale_hype', 'Your Kindred is brighter today. That’s not a metaphor — go look at it.'),
+  ('vale_hype', 'Day by day is not a slogan, it’s a method, and you are running it correctly.'),
+  ('vale_hype', 'The Haze is thinner where you’re standing. I can actually see the road.'),
+  ('vale_hype', 'You didn’t feel like it and you did it anyway. That’s the strong version.'),
+  ('vale_hype', 'Something in you got easier today. It compounds. Keep going.'),
+  ('vale_hype', 'The Dealer is very quiet this morning. I noticed. He noticed.'),
+  ('vale_hype', 'You’re building a person who does this. That person is nearly here.'),
+  ('vale_hype', 'One more ring on the tree. Small, permanent, yours.'),
+  ('vale_hype', 'You checked in. That’s the hard part done before breakfast.'),
+  ('vale_hype', 'This is the stretch where it stops being white-knuckle. Feel it starting?'),
+  ('vale_hype', 'Your best streak just moved. New floor, not a lucky day.'),
+  ('vale_hype', 'Whatever you did to get through last night — do that again.'),
+  ('vale_hype', 'A week is where the fog starts lifting off the low ground. Look around.'),
+  ('vale_hype', 'You’re past the part most people don’t get past. Say that out loud once.'),
+  ('vale_hype', 'Thirty days rewires the reflex. You are literally rebuilding hardware.'),
+  ('vale_hype', 'The version of you from day one wouldn’t believe today happened.'),
+  ('vale_hype', 'That’s a real number now. Not a fluke, not a good week. A number.'),
+  ('vale_hype', 'You’ve stopped negotiating with it. That’s the moment things change.'),
+  ('vale_hype', 'Clearsummit is a long walk and you are actually on the road.'),
+  ('vale_hype', 'Nothing dramatic happened today. That was the win.'),
+  ('vale_hype', 'Your friends can see that streak. Let them.'),
+  ('vale_hype', 'You beat the craving with the most powerful tool there is: waiting.'),
+  ('vale_hype', 'The counter is high enough now that it protects itself. Guard it.'),
+  ('vale_hype', 'You are officially boring to the Haze. That is the highest honour here.'),
+  ('vale_hype', 'Rest properly tonight. You earned an unremarkable evening.'),
+  ('vale_hype', 'Momentum is real and it is currently pointed the right way.'),
+  ('vale_hype', 'You showed up on a day you didn’t want to. That one counts double.'),
+  ('vale_hype', 'Whatever the number is, it’s bigger than yesterday. That’s all it ever needs to be.'),
+  ('vale_hype', 'The cravings are getting shorter. You may not have noticed. I did.'),
+  ('vale_hype', 'You are the least interesting client the Dealer has. Stay unhireable.'),
+  ('vale_hype', 'That’s another day your Kindred didn’t have to sleep through.'),
+  ('vale_hype', 'You made room in your week for something that isn’t this. Fill it.'),
+  ('vale_hype', 'The hard days are the ones that build the floor. This is a floor day.'),
+  ('vale_hype', 'Look how far Fogmouth is behind you.'),
+  ('vale_hype', 'The road to Clearsummit is made entirely of days like this one.'),
+  ('vale_hype', 'You’ve got proof now. Not hope — proof. Go check the Codex.'),
+  ('vale_hype', 'Nobody handed you that streak. Every single day of it was a decision.'),
+  ('vale_hype', 'Same again tomorrow. That’s the whole plan and it works.'),
+  ('vale_tip', 'Cravings peak and fall in about fifteen minutes. Set a timer and let it break on the rocks.'),
+  ('vale_tip', 'Ride it, don’t fight it. Name what it feels like in your body and watch it move. It always moves.'),
+  ('vale_tip', 'HALT: hungry, angry, lonely, tired. Fix the actual one. Most cravings are wearing a disguise.'),
+  ('vale_tip', 'Change the room. A craving is half habit-loop and half furniture.'),
+  ('vale_tip', 'Delay ten minutes. Not forever — ten minutes. You almost never come back to it.'),
+  ('vale_tip', 'Drink a full glass of cold water first. It buys you ninety seconds of thinking room.'),
+  ('vale_tip', 'Walk to the end of the street and back. Motion drains the urge faster than willpower does.'),
+  ('vale_tip', 'Write down the exact excuse your brain just made. Read it back. They’re never good on paper.'),
+  ('vale_tip', 'Put a wall between you and the thing: a locked drawer, a friend’s house, a different route home.'),
+  ('vale_tip', 'Text one person the word "craving". You don’t have to explain. The sending is the technique.'),
+  ('vale_tip', 'Box breathing: four in, four hold, four out, four hold. Do it six times before you decide anything.'),
+  ('vale_tip', 'Eat something with real sugar or protein. Low blood sugar imitates a craving almost perfectly.'),
+  ('vale_tip', 'Plan your evening at 4pm, not at 9pm. The 9pm version of you is not on your side.'),
+  ('vale_tip', 'Keep your hands busy — controller, cards, dishes, guitar. Idle hands are the Haze’s cheapest tool.'),
+  ('vale_tip', 'The urge is a wave, not a wall. Waves have a top. You have been over the top before.'),
+  ('vale_tip', 'Identify your first domino. It’s rarely the substance. It’s usually a route, a room, or a person.'),
+  ('vale_tip', 'Put the money you didn’t spend somewhere you can see it. Numbers going up beat numbers going down.'),
+  ('vale_tip', 'If it’s a weekend pattern, decide Friday morning what Saturday looks like. Decide it once.'),
+  ('vale_tip', 'Sleep is the whole game. If tonight is bad, tomorrow’s craving is louder for free.'),
+  ('vale_tip', 'Have a replacement ritual with the same shape: same time, same chair, different thing in your hand.'),
+  ('vale_tip', 'Tell one friend your streak number. Accountability is a cheat code and it is legal.'),
+  ('vale_tip', 'Notice the "I deserve this" thought. Rewards are fine — pick one that doesn’t cost you the streak.'),
+  ('vale_tip', 'The 20 minutes after work is the fault line. Fill it before it fills itself.'),
+  ('vale_tip', 'Exercise for ten minutes, badly. Effort matters more than form for killing an urge.'),
+  ('vale_tip', 'When bored, do the smallest useful thing in sight. Boredom is a vacuum and vacuums get filled.'),
+  ('vale_tip', 'Keep a "why" note in your phone written on a good day. Read it on a bad one.'),
+  ('vale_tip', 'Play out the whole tape: not just the first ten minutes, but tomorrow morning too.'),
+  ('vale_tip', 'If you’re somewhere it’s happening, leave early. Leaving early is not losing.'),
+  ('vale_tip', 'Practise the flat no. No explanation, no debate, no apology. "I’m good, thanks." Full stop.'),
+  ('vale_tip', 'Celebrate out loud at 7, 30 and 90 days. Under-celebrating is how people quit quitting.'),
+  ('vale_tip', 'Cold water on your face and wrists resets the nervous system in about thirty seconds.'),
+  ('vale_tip', 'Track the trigger, not just the day. Patterns you can see are patterns you can plan around.'),
+  ('vale_tip', 'Put your phone across the room at night. Half of the 1am spiral is just reach.'),
+  ('vale_tip', 'A craving after a good day is normal. It isn’t a sign you’re failing — it’s the old wiring firing.'),
+  ('vale_tip', 'Make the next step tiny. "Get through the next hour" is a complete plan.'),
+  ('vale_tip', 'If you slipped, log it today. A slip logged today is one day. A slip hidden becomes a week.'),
+  ('vale_tip', 'Stack a new habit onto an existing one: kettle on, then breathe. The kettle does the remembering.'),
+  ('vale_tip', 'Say the craving out loud in a stupid voice. It is remarkably hard to obey something that sounds silly.'),
+  ('vale_tip', 'Have a "go" list of three things you’ll actually do at 9pm. Decide it now, not then.'),
+  ('vale_tip', 'Rest is not relapse. A bad day inside a good month is still a good month.');
+
+-- Sanity check -------------------------------------------------------------
+do $$
+begin
+  raise notice 'Hollowmoor seeded: % species, % badges, % quests, % items, % voice lines',
+    (select count(*) from kindred_species),
+    (select count(*) from badges),
+    (select count(*) from quests),
+    (select count(*) from items),
+    (select count(*) from voice_lines);
+end $$;

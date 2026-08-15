@@ -1,0 +1,8 @@
+# Normalise line endings so Windows and macOS/Linux collaborators don't
+# generate whole-file diffs against each other.
+* text=auto eol=lf
+
+# Binary — never touch these.
+*.png binary
+*.mp3 binary
+*.ico binary

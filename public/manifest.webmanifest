@@ -1,0 +1,21 @@
+{
+  "name": "Hollowmoor",
+  "short_name": "Hollowmoor",
+  "description": "Break out of the Haze. A creature-collector world where your clean streak is your rank.",
+  "start_url": "/hub",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0716",
+  "theme_color": "#150e2b",
+  "categories": ["health", "games", "lifestyle"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Check in", "url": "/checkin", "description": "Log today" },
+    { "name": "Craving now", "url": "/arcade", "description": "Ride one out" }
+  ]
+}
