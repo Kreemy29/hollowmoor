@@ -23,20 +23,16 @@ services:
     # `npm ci` for a reproducible install from package-lock.json.
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
-    # Only rebuild when something that affects the bundle changes.
+    # Skip rebuilds for things that cannot affect the bundle. Deliberately a
+    # denylist, not an allowlist: an allowlist silently stops rebuilding when
+    # you add a new top-level config file, which is a miserable thing to debug.
     buildFilter:
-      paths:
-        - app/**
-        - public/**
-        - index.html
-        - package.json
-        - package-lock.json
-        - vite.config.ts
-        - tsconfig.json
       ignoredPaths:
         - supabase/**
         - tests/**
+        - scripts/**
         - README.md
+        - .env.example
 
     envVars:
       # Vite 5 needs Node 18+; pinned so a Render default bump can't break builds.
