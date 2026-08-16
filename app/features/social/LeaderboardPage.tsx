@@ -159,7 +159,10 @@ function FriendPanel({ code }: { code: string }) {
     },
   })
 
-  const inviteUrl = `${window.location.origin}/start?invite=${code}`
+  // Hash form, to match HashRouter (see app/main.tsx). Without the `#` this
+  // link 404s on any host that isn't configured to rewrite unknown paths —
+  // and a dead invite link is the single worst bug this app could ship.
+  const inviteUrl = `${window.location.origin}/#/start?invite=${code}`
 
   return (
     <Panel>

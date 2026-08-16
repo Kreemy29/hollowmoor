@@ -22,7 +22,8 @@ self.addEventListener('push', (event) => {
     badge: '/icon-192.png',
     tag: payload.tag || 'hollowmoor',
     renotify: false,
-    data: { url: payload.url || '/hub' },
+    // Hash routes — the app uses HashRouter so these work with no host config.
+    data: { url: payload.url || '/#/hub' },
     actions: payload.actions || [{ action: 'checkin', title: 'Check in' }],
   }
 
@@ -31,7 +32,8 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
-  const target = event.action === 'checkin' ? '/checkin' : event.notification.data?.url || '/hub'
+  const target =
+    event.action === 'checkin' ? '/#/checkin' : event.notification.data?.url || '/#/hub'
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {

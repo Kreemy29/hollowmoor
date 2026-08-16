@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
     try {
       const result = await sendPush(
         { endpoint: row.endpoint, p256dh: row.p256dh, auth: row.auth },
-        { title: copy.title, body, url: '/checkin', tag: `checkin-${today}` },
+        { title: copy.title, body, url: '/#/checkin', tag: `checkin-${today}` },
         { publicKey, privateKey, subject },
       )
 

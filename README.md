@@ -204,9 +204,14 @@ process and nothing to keep warm.
    the deploy will be the fully-playable offline build. Add them later and redeploy
    when you want friends, chat and raids.
 
-`render.yaml` pins Node 22, sets SPA rewrites so `/checkin` survives a hard refresh,
-caches hashed assets forever, and keeps `/sw.js` uncached so push registration never
-sticks to an old build.
+`render.yaml` pins Node 22, caches hashed assets forever, and keeps `/sw.js` uncached
+so push registration never sticks to an old build.
+
+**Routing needs no host configuration.** The app uses `HashRouter`, so URLs look like
+`/#/checkin` and every route resolves in the browser. That means it works on any static
+host — Render, Vercel, GitHub Pages, an S3 bucket — without an SPA rewrite rule. If you
+prefer clean paths, add a rewrite of `/*` → `/index.html` at your host and switch the
+one import in `app/main.tsx` back to `BrowserRouter`.
 
 > ⚠️ **`XAI_API_KEY` does not go in Render.** Anything injected into a static build is
 > compiled into the bundle and readable by anyone. The x.ai key belongs only in
