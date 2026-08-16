@@ -383,6 +383,14 @@ export function createLocalBackend(): Backend {
         }
       },
 
+      async signInWithEmail() {
+        return {
+          sent: false,
+          message:
+            'There are no accounts in this build — saves live in this browser. Back yours up from Settings and restore it here if you lose it.',
+        }
+      },
+
       async signOut() {
         localStorage.removeItem(SESSION_KEY)
       },
@@ -394,6 +402,49 @@ export function createLocalBackend(): Backend {
 
       async exportData() {
         return read()
+      },
+
+      async importData(payload: unknown) {
+        // Validate before overwriting: restoring garbage over a working save
+        // would turn a recovery attempt into a second data loss.
+        const candidate = payload as Partial<LocalStore> | null
+        if (
+          !candidate ||
+          typeof candidate !== 'object' ||
+          candidate.version !== 1 ||
+          !candidate.userId ||
+          !candidate.profile?.handle ||
+          !candidate.streaks ||
+          !Array.isArray(candidate.kindred)
+        ) {
+          return { ok: false, message: 'That file isn’t a Hollowmoor save.' }
+        }
+
+        const restored = candidate as LocalStore
+        // Fill in anything a save from an older build might not have, so an
+        // old backup never crashes a newer app.
+        restored.checkins ??= []
+        restored.badges ??= []
+        restored.inventory ??= []
+        restored.quests ??= []
+        restored.ledger ??= []
+        restored.muted ??= []
+        restored.chat ??= []
+        restored.friends ??= []
+        restored.duels ??= []
+        restored.trades ??= []
+        restored.reports ??= {}
+        restored.minigameRuns ??= []
+        restored.recentMessageAt ??= []
+        restored.highScores ??= {}
+        restored.grit ??= 0
+
+        write(restored)
+        localStorage.setItem(SESSION_KEY, restored.userId)
+        return {
+          ok: true,
+          message: `Welcome back, ${restored.profile.handle}. ${restored.streaks.currentStreak} days restored.`,
+        }
       },
     },
 

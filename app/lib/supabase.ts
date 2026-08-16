@@ -37,6 +37,12 @@ export async function getSupabase(): Promise<SupabaseClient> {
         autoRefreshToken: true,
         // Guests get an anonymous session; magic-link upgrades it in place.
         detectSessionInUrl: true,
+        // PKCE returns the auth result as a `?code=` query param. The implicit
+        // flow returns it in the URL *hash* — which this app uses for routing,
+        // so the two would fight over the same fragment and the sign-in would
+        // be swallowed by the router. Do not change this without moving off
+        // HashRouter first.
+        flowType: 'pkce',
       },
       realtime: { params: { eventsPerSecond: 5 } },
     })

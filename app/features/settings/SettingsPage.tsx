@@ -105,9 +105,17 @@ export function SettingsPage() {
           {' · '}
           {online ? 'Synced to your Supabase project.' : 'Stored only in this browser.'}
         </p>
+        {!online && (
+          <p className="mb-3 border-2 border-amber-warn/50 p-3 text-[12px] text-amber-warn">
+            Your save lives in this browser only. Browsers do throw these away — iOS clears them
+            after about a week of not visiting. <strong>Download a backup and keep the file.</strong>{' '}
+            You can restore it from the welcome screen on any device.
+          </p>
+        )}
+
         <div className="grid gap-2 sm:grid-cols-2">
           <Button
-            variant="ghost"
+            variant={online ? 'ghost' : 'primary'}
             onClick={async () => {
               const backend = await getBackend()
               const data = await backend.auth.exportData()
@@ -115,13 +123,17 @@ export function SettingsPage() {
               const url = URL.createObjectURL(blob)
               const a = document.createElement('a')
               a.href = url
-              a.download = `hollowmoor-${snapshot.profile.handle}.json`
+              a.download = `hollowmoor-${snapshot.profile.handle}-${snapshot.streaks.currentStreak}d.json`
               a.click()
               URL.revokeObjectURL(url)
-              toast({ tone: 'info', title: 'Export downloaded' })
+              toast({
+                tone: 'win',
+                title: 'Backup downloaded',
+                body: 'Keep it somewhere you won’t lose it.',
+              })
             }}
           >
-            Export my data
+            Back up my save
           </Button>
           <Button variant="ghost" onClick={() => void signOut()}>
             Sign out

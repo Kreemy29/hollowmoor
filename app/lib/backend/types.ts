@@ -59,13 +59,24 @@ export interface AuthApi {
   /** Resolves the stored session, if any. */
   currentUserId(): Promise<string | null>
   createGuest(input: CreateGuestInput): Promise<GameSnapshot>
-  /** Optional upgrade: magic-link email so a guest can move devices. */
+  /** Optional upgrade: attaches an email to the CURRENT guest session. */
   linkEmail(email: string): Promise<{ sent: boolean; message: string }>
+  /**
+   * Signs in an existing account from scratch. Distinct from `linkEmail`:
+   * this one has no session to upgrade, it creates one.
+   */
+  signInWithEmail(email: string): Promise<{ sent: boolean; message: string }>
   signOut(): Promise<void>
   /** Wipes every row this player owns. Required by §9.6. */
   deleteAccount(): Promise<void>
   /** Full data export as a JSON-serialisable object. Required by §9.6. */
   exportData(): Promise<unknown>
+  /**
+   * Restores a save produced by `exportData`. This is the escape hatch for
+   * every way a browser can lose a local save — eviction, a cleared cache, a
+   * new phone — and doubles as the offline→online migration path.
+   */
+  importData(payload: unknown): Promise<{ ok: boolean; message: string }>
 }
 
 export interface GameApi {

@@ -141,10 +141,15 @@ describe('the check-in offers both answers equally', () => {
 })
 
 describe('settings', () => {
-  it('offers data export and account deletion', async () => {
+  it('offers a backup and account deletion', async () => {
     wrap(<SettingsPage />)
-    await waitFor(() => expect(screen.getByRole('button', { name: /export my data/i })).toBeTruthy())
+    await waitFor(() => expect(screen.getByRole('button', { name: /back up my save/i })).toBeTruthy())
     expect(screen.getByRole('button', { name: /delete my account/i })).toBeTruthy()
+  })
+
+  it('warns offline players that the browser can lose their save', async () => {
+    wrap(<SettingsPage />)
+    await waitFor(() => expect(screen.getByText(/lives in this browser only/i)).toBeTruthy())
   })
 
   it('has sound off by default', async () => {

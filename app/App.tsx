@@ -1,7 +1,8 @@
 import { Suspense, lazy, useEffect } from 'react'
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { AppShell } from './components/AppShell'
 import { useGame } from './store/game'
+import { AuthPage } from './features/auth/AuthPage'
 import { Onboarding } from './features/onboarding/Onboarding'
 import { HubPage } from './features/hub/HubPage'
 import { CheckinPage } from './features/checkin/CheckinPage'
@@ -52,6 +53,7 @@ export function App() {
   const error = useGame((s) => s.error)
   const bootstrap = useGame((s) => s.bootstrap)
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     void bootstrap()
@@ -74,8 +76,14 @@ export function App() {
   }
 
   if (status === 'anonymous') {
-    // Everything routes to onboarding until there's a Breaker to play as.
-    return location.pathname === '/start' ? <Onboarding /> : <Navigate to="/start" replace />
+    // The account screen comes first so someone returning to an evicted save
+    // has a way back in, rather than being funnelled straight into creating a
+    // second Breaker and losing the first one silently.
+    if (location.pathname === '/start') return <Onboarding />
+    if (location.pathname === '/welcome') {
+      return <AuthPage onNewGame={() => navigate('/start')} />
+    }
+    return <Navigate to="/welcome" replace />
   }
 
   return (
@@ -84,6 +92,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/hub" replace />} />
           <Route path="/start" element={<Navigate to="/hub" replace />} />
+          <Route path="/welcome" element={<Navigate to="/hub" replace />} />
           <Route path="/hub" element={<HubPage />} />
           <Route path="/checkin" element={<CheckinPage />} />
           <Route path="/map" element={<MapPage />} />

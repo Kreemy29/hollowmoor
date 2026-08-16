@@ -199,6 +199,76 @@ describe('data ownership', () => {
   })
 })
 
+describe('backup and restore', () => {
+  it('round-trips a save, streak and all', async () => {
+    const backend = await newBreaker()
+    for (let day = 1; day <= 8; day += 1) {
+      setDay(`2026-08-0${day}`)
+      await backend.game.checkIn({ result: 'clean' })
+    }
+    const backup = await backend.auth.exportData()
+    const before = await backend.game.snapshot()
+
+    // Simulate the browser throwing the save away.
+    localStorage.clear()
+    expect(await backend.game.snapshot()).toBeNull()
+
+    const res = await backend.auth.importData(backup)
+    expect(res.ok).toBe(true)
+
+    const after = await backend.game.snapshot()
+    expect(after!.streaks.currentStreak).toBe(before!.streaks.currentStreak)
+    expect(after!.streaks.bestStreak).toBe(before!.streaks.bestStreak)
+    expect(after!.profile.handle).toBe('test_breaker')
+    expect(after!.kindred[0].stage).toBe(before!.kindred[0].stage)
+    expect(after!.grit).toBe(before!.grit)
+  })
+
+  it('keeps the check-in history so trigger patterns survive a restore', async () => {
+    const backend = await newBreaker()
+    setDay('2026-08-01')
+    await backend.game.checkIn({ result: 'relapse', triggerTag: 'payday' })
+    const backup = await backend.auth.exportData()
+
+    localStorage.clear()
+    await backend.auth.importData(backup)
+
+    const history = await backend.game.history()
+    expect(history[0].triggerTag).toBe('payday')
+  })
+
+  it('refuses junk rather than destroying a working save', async () => {
+    const backend = await newBreaker()
+    setDay('2026-08-01')
+    await backend.game.checkIn({ result: 'clean' })
+
+    for (const junk of [null, {}, 'nonsense', { version: 99 }, { version: 1, userId: 'x' }]) {
+      const res = await backend.auth.importData(junk)
+      expect(res.ok).toBe(false)
+    }
+
+    // The real save is untouched.
+    const snap = await backend.game.snapshot()
+    expect(snap!.streaks.currentStreak).toBe(1)
+  })
+
+  it('tolerates a save from an older build that lacks newer fields', async () => {
+    const backend = await newBreaker()
+    const backup = (await backend.auth.exportData()) as Record<string, unknown>
+    // An older export wouldn't have these at all.
+    delete backup.minigameRuns
+    delete backup.reports
+    delete backup.highScores
+
+    localStorage.clear()
+    const res = await backend.auth.importData(backup)
+    expect(res.ok).toBe(true)
+    const snap = await backend.game.snapshot()
+    expect(snap).not.toBeNull()
+    expect(snap!.highScores.crusher).toBe(0)
+  })
+})
+
 describe('the voice', () => {
   it('always has a line, with no API key and no network', async () => {
     const backend = await newBreaker()

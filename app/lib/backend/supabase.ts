@@ -213,6 +213,23 @@ export async function createSupabaseBackend(): Promise<Backend> {
         }
       },
 
+      async signInWithEmail(email: string) {
+        const { error } = await sb.auth.signInWithOtp({
+          email,
+          options: {
+            // Back to the app root. PKCE puts the result in a `?code=` query
+            // param, which does not collide with the router's hash.
+            emailRedirectTo: window.location.origin,
+            shouldCreateUser: true,
+          },
+        })
+        if (error) return { sent: false, message: error.message }
+        return {
+          sent: true,
+          message: `Link sent to ${email}. Open it on this device and you're in — check spam if it's slow.`,
+        }
+      },
+
       async signOut() {
         cachedUserId = null
         await sb.auth.signOut()
@@ -226,6 +243,20 @@ export async function createSupabaseBackend(): Promise<Backend> {
 
       async exportData() {
         return rpc('hm_export_data')
+      },
+
+      async importData(payload: unknown) {
+        // Restoring an offline save into Postgres. The RPC is idempotent and
+        // refuses to clobber an account that already has a streak, so a
+        // mistaken restore can't wipe real progress.
+        try {
+          const res = await rpc<{ ok: boolean; message: string }>('hm_import_save', {
+            p_payload: payload,
+          })
+          return res
+        } catch (err) {
+          return { ok: false, message: (err as Error).message }
+        }
       },
     },
 
