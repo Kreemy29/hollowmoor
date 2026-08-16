@@ -112,9 +112,39 @@ function read(): LocalStore | null {
   }
 }
 
+/**
+ * Persists the save.
+ *
+ * iOS Safari in Private Browsing exposes `localStorage` but throws
+ * QuotaExceededError on every write, so an unguarded setItem here takes the
+ * whole app down with an unhandled rejection the moment someone taps "Enter
+ * Restwick" on a phone. Fail with a sentence a human can act on instead.
+ */
 function write(store: LocalStore): LocalStore {
-  localStorage.setItem(STORE_KEY, JSON.stringify(store))
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(store))
+  } catch (err) {
+    const name = (err as { name?: string })?.name
+    if (name === 'QuotaExceededError' || name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+      throw new Error(
+        'This browser won’t let Hollowmoor save. If you’re in Private Browsing, open it in a normal tab — your streak needs somewhere to live.',
+      )
+    }
+    throw new Error('Couldn’t save your progress in this browser.')
+  }
   return store
+}
+
+/** True when this browser can actually persist a save at all. */
+export function storageAvailable(): boolean {
+  try {
+    const probe = `${STORE_KEY}:probe`
+    localStorage.setItem(probe, '1')
+    localStorage.removeItem(probe)
+    return true
+  } catch {
+    return false
+  }
 }
 
 function mustRead(): LocalStore {

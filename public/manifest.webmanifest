@@ -2,7 +2,7 @@
   "name": "Hollowmoor",
   "short_name": "Hollowmoor",
   "description": "Break out of the Haze. A creature-collector world where your clean streak is your rank.",
-  "start_url": "/hub",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

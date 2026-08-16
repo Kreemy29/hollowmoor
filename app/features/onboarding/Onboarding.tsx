@@ -7,6 +7,7 @@ import { SupportLink, SupportSheet } from '@/components/SupportSheet'
 import { STARTERS } from '@/data/kindred'
 import { ACCESSORIES, HAIR_COLORS, OUTFIT_COLORS, SKIN_TONES } from '@/lib/sprite'
 import { useGame } from '@/store/game'
+import { storageAvailable } from '@/lib/backend/local'
 import { sfx } from '@/lib/audio'
 import type { AvatarConfig, StarterId } from '@/lib/types'
 
@@ -115,6 +116,11 @@ export function Onboarding() {
 }
 
 function ColdOpen({ onNext }: { onNext: () => void }) {
+  // Warn before they build an avatar and pick a starter, not after — a phone in
+  // Private Browsing can't persist a save, and finding that out on the last tap
+  // is the worst possible moment.
+  const canSave = storageAvailable()
+
   return (
     <div className="text-center">
       <h1 className="font-display text-lg text-bone-100">HOLLOWMOOR</h1>
@@ -132,6 +138,13 @@ function ColdOpen({ onNext }: { onNext: () => void }) {
           here is the only number that matters: how many days you’ve stayed out of it.
         </p>
       </div>
+
+      {!canSave && (
+        <p className="mt-6 border-2 border-amber-warn/60 bg-haze-900/60 p-3 text-left text-[12px] text-amber-warn">
+          This browser won’t let Hollowmoor save anything — you’re probably in Private Browsing.
+          Open it in a normal tab, or your streak won’t survive closing this page.
+        </p>
+      )}
 
       <Button className="mt-8 w-full" onClick={onNext}>
         Step out of the fog
